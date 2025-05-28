@@ -30,7 +30,7 @@ A comprehensive Arduino library for the QMI8658 6-axis Inertial Measurement Unit
 ### Method 3: Git Clone
 ```bash
 cd ~/Documents/Arduino/libraries/
-git clone https://github.com/[your-username]/QMI8658-Arduino-Library.git
+git clone https://github.com/lahavg/QMI8658-Arduino-Library.git
 ```
 
 ## Wiring
