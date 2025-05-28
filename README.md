@@ -35,13 +35,49 @@ git clone https://github.com/[your-username]/QMI8658-Arduino-Library.git
 
 ## Wiring
 
+## Wiring
+
 ### Basic I2C Connection
-| QMI8658 Pin | Arduino Pin | ESP32 Pin | Notes |
-|-------------|-------------|-----------|-------|
-| VCC         | 3.3V        | 3.3V      | **Important: Use 3.3V, not 5V** |
-| GND         | GND         | GND       | Ground |
-| SDA         | A4 (Uno/Nano) | 21 (default) | I2C Data |
-| SCL         | A5 (Uno/Nano) | 22 (default) | I2C Clock |
+| QMI8658 Pin | Arduino Pin | ESP32 Pin | Raspberry Pi Pin | RP2040/Pico Pin | Notes |
+|-------------|-------------|-----------|------------------|-----------------|-------|
+| VCC         | 3.3V        | 3.3V      | 3.3V (Pin 1)     | 3V3 (Pin 36)    | **Important: Use 3.3V, not 5V** |
+| GND         | GND         | GND       | GND (Pin 6)      | GND (Pin 38)    | Ground |
+| SDA         | A4 (Uno/Nano) | 21 (default) | GPIO 2 (Pin 3) | GP6 (Pin 9) or GP4 (Pin 6) | I2C Data |
+| SCL         | A5 (Uno/Nano) | 22 (default) | GPIO 3 (Pin 5) | GP7 (Pin 10) or GP5 (Pin 7) | I2C Clock |
+
+
+
+### I2C Address
+The QMI8658 has two possible I2C addresses:
+- `0x6A` (default, when SA0 pin is low)
+- `0x6B` (when SA0 pin is high)
+
+The library automatically detects the correct address.
+
+### Platform-Specific Notes
+
+#### RP2040/Raspberry Pi Pico
+- Two I2C interfaces available: I2C0 and I2C1
+- **Default pins**: SDA=GP4, SCL=GP5 (I2C0) | SDA=GP6, SCL=GP7 (I2C1)
+- Library automatically selects Wire or Wire1 based on pins
+- Use `imu.begin(6, 7)` for pins 6,7 (uses Wire1 automatically)
+- Use `imu.begin(4, 5)` for pins 4,5 (uses Wire)
+
+#### Raspberry Pi
+- I2C must be enabled: `sudo raspi-config` → Interface Options → I2C → Enable
+- Install required packages: `sudo apt-get install i2c-tools python3-smbus`
+- Test connection: `i2cdetect -y 1` (should show device at 0x6A or 0x6B)
+- Default I2C bus is `/dev/i2c-1`
+
+#### ESP32/ESP8266
+- Can use any GPIO pins for I2C
+- Default pins: SDA=21, SCL=22 (ESP32) | SDA=4, SCL=5 (ESP8266)
+- Use `Wire.begin(SDA_PIN, SCL_PIN)` for custom pins
+
+#### Arduino Uno/Nano
+- Fixed I2C pins: SDA=A4, SCL=A5
+- Pull-up resistors (4.7kΩ) recommended for long wires
+- Use 3.3V logic level shifter if needed
 
 ### I2C Address
 The QMI8658 has two possible I2C addresses:
