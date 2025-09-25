@@ -422,6 +422,11 @@ bool QMI8658::readAEVelocity(float &x, float &y, float &z)
     return true;
 }
 
+bool QMI8658::readAEStatus(QMI8658_AE_Status *status)
+{
+    return readRegister(QMI8658_dVX_L, (uint8_t*)status, 2);
+}
+
 bool QMI8658::isDataReady() {
     uint8_t status;
     if (!readRegister(QMI8658_STATUS0, status)) {

@@ -178,6 +178,12 @@ struct QMI8658_AE_Data {
     float vX, vY, vZ;
 };
 
+// 
+struct QMI8658_AE_Status {
+    uint8_t statGA;
+    uint8_t statV;
+};
+
 // Display precision options
 enum QMI8658_Precision {
     QMI8658_PRECISION_2 = 2,    // 2 decimal places (e.g., 9.81)
@@ -218,6 +224,7 @@ public:
 
     bool readAEQuternion(float &w, float &x, float &y, float &z);
     bool readAEVelocity(float &x, float &y, float &z);
+    bool readAEStatus(QMI8658_AE_Status *status);
     
     // Alternative reading methods with specific units
     bool readAccelMG(float &x, float &y, float &z);     // Always returns mg
