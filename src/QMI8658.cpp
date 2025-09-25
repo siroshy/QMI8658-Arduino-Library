@@ -38,15 +38,6 @@ bool QMI8658::begin(TwoWire &wire, uint8_t address) {
         return false;
     }
     
-    // Set default configuration
-    setAccelRange(QMI8658_ACCEL_RANGE_8G);
-    setAccelODR(QMI8658_ACCEL_ODR_1000HZ);
-    setGyroRange(QMI8658_GYRO_RANGE_512DPS);
-    setGyroODR(QMI8658_GYRO_ODR_1000HZ);
-    
-    // Enable accelerometer and gyroscope
-    enableSensors(QMI8658_ENABLE_ACCEL | QMI8658_ENABLE_GYRO);
-    
     return true;
 }
 
@@ -106,6 +97,44 @@ bool QMI8658::begin(uint8_t sda_pin, uint8_t scl_pin, uint8_t address) {
     #endif
     
     return begin(*_wire, address);
+}
+
+void QMI8658::setDefaultConf()
+{
+ 
+    // Set default configuration
+    setAccelRange(QMI8658_ACCEL_RANGE_8G);
+    setAccelODR(QMI8658_ACCEL_ODR_1000HZ);
+    setGyroRange(QMI8658_GYRO_RANGE_512DPS);
+    setGyroODR(QMI8658_GYRO_ODR_1000HZ);
+    
+    // Enable accelerometer and gyroscope
+    enableSensors(QMI8658_ENABLE_ACCEL | QMI8658_ENABLE_GYRO);
+    
+}
+
+bool QMI8658::initAEMode(QMI8658_AccelRange accRange, QMI8658_GyroRange gyroRange, QMI8658_AE_ODR aeODR)
+{
+ 
+
+    bool done = true;
+
+    uint8_t ctrl7 = (
+        QMI8658_ENABLE_ACCEL |
+        QMI8658_ENABLE_GYRO  |
+        QMI8658_ENABLE_AE
+    );
+
+    done &= writeRegister(QMI8658_CTRL7, ctrl7);
+    done &= writeRegister(QMI8658_CTRL6, (aeODR | 0x80));
+
+    uint8_t ctrl2 = ((accRange << 4) | 0x80);
+    done &= writeRegister(QMI8658_CTRL2, ctrl2);
+
+    uint8_t ctrl3 = ((gyroRange << 4) | 0x80);
+    done &= writeRegister(QMI8658_CTRL3, ctrl3);
+
+    return done;
 }
 
 bool QMI8658::setAccelRange(QMI8658_AccelRange range) {
@@ -364,6 +393,35 @@ bool QMI8658::readSensorData(QMI8658_Data &data) {
     return true;
 }
 
+bool QMI8658::readAEQuternion(float &w, float &x, float &y, float &z)
+{
+    RawAEQuternion quternion;
+    if (!readRegister(QMI8658_dQW_L, (uint8_t*)&quternion, 8)) {
+        return false;
+    }
+
+    w = convertQuternionComponent(quternion.W);
+    x = convertQuternionComponent(quternion.X);
+    y = convertQuternionComponent(quternion.Y);
+    z = convertQuternionComponent(quternion.Z);
+
+    return true;
+}
+
+bool QMI8658::readAEVelocity(float &x, float &y, float &z)
+{
+    RawAEVelocity velocity;
+    if (!readRegister(QMI8658_dVX_L, (uint8_t*)&velocity, 6)) {
+        return false;
+    }
+
+    x = convertVelToMs(velocity.X);
+    y = convertVelToMs(velocity.Y);
+    z = convertVelToMs(velocity.Z);
+
+    return true;
+}
+
 bool QMI8658::isDataReady() {
     uint8_t status;
     if (!readRegister(QMI8658_STATUS0, status)) {
@@ -466,6 +524,16 @@ float QMI8658::convertGyroToDPS(int16_t raw_value) {
 
 float QMI8658::convertGyroToRADS(int16_t raw_value) {
     return (raw_value * 0.01745f) / _gyro_lsb_div; // * pi/180
+}
+
+float QMI8658::convertQuternionComponent(int16_t raw_value)
+{
+    return ((float)raw_value / (float)_q_lsb_div);
+}
+
+float QMI8658::convertVelToMs(int16_t raw_value)
+{
+    return ((float)raw_value / (float)_vel_lsb_div);
 }
 
 bool QMI8658::enableWakeOnMotion(uint8_t threshold) {

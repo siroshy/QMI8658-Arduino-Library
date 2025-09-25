@@ -51,37 +51,56 @@ extern TwoWire Wire1;
 
 // Register addresses
 enum QMI8658_Register {
-    QMI8658_WHO_AM_I        = 0x00,
-    QMI8658_REVISION        = 0x01,
-    QMI8658_CTRL1          = 0x02,
-    QMI8658_CTRL2          = 0x03,  // Accelerometer control
-    QMI8658_CTRL3          = 0x04,  // Gyroscope control
-    QMI8658_CTRL4          = 0x05,  // Magnetometer control
-    QMI8658_CTRL5          = 0x06,  // Data processing settings
-    QMI8658_CTRL6          = 0x07,  // AttitudeEngine control
-    QMI8658_CTRL7          = 0x08,  // Sensor enable status
-    QMI8658_CTRL8          = 0x09,
-    QMI8658_CTRL9          = 0x0A,
-    QMI8658_STATUS0        = 0x2E,
-    QMI8658_STATUS1        = 0x2F,
-    QMI8658_TIMESTAMP_L    = 0x30,
-    QMI8658_TIMESTAMP_M    = 0x31,
-    QMI8658_TIMESTAMP_H    = 0x32,
-    QMI8658_TEMP_L         = 0x33,
-    QMI8658_TEMP_H         = 0x34,
-    QMI8658_AX_L           = 0x35,
-    QMI8658_AX_H           = 0x36,
-    QMI8658_AY_L           = 0x37,
-    QMI8658_AY_H           = 0x38,
-    QMI8658_AZ_L           = 0x39,
-    QMI8658_AZ_H           = 0x3A,
-    QMI8658_GX_L           = 0x3B,
-    QMI8658_GX_H           = 0x3C,
-    QMI8658_GY_L           = 0x3D,
-    QMI8658_GY_H           = 0x3E,
-    QMI8658_GZ_L           = 0x3F,
-    QMI8658_GZ_H           = 0x40
+    QMI8658_WHO_AM_I    = 0x00,
+    QMI8658_REVISION    = 0x01,
+    QMI8658_CTRL1       = 0x02,
+    QMI8658_CTRL2       = 0x03,  // Accelerometer control
+    QMI8658_CTRL3       = 0x04,  // Gyroscope control
+    QMI8658_CTRL4       = 0x05,  // Magnetometer control
+    QMI8658_CTRL5       = 0x06,  // Data processing settings
+    QMI8658_CTRL6       = 0x07,  // AttitudeEngine control
+    QMI8658_CTRL7       = 0x08,  // Sensor enable status
+    QMI8658_CTRL8       = 0x09,
+    QMI8658_CTRL9       = 0x0A,
+    QMI8658_STATUS0     = 0x2E,
+    QMI8658_STATUS1     = 0x2F,
+    QMI8658_TIMESTAMP_L = 0x30,
+    QMI8658_TIMESTAMP_M = 0x31,
+    QMI8658_TIMESTAMP_H = 0x32,
+    QMI8658_TEMP_L      = 0x33,
+    QMI8658_TEMP_H      = 0x34,
+    QMI8658_AX_L        = 0x35,
+    QMI8658_AX_H        = 0x36,
+    QMI8658_AY_L        = 0x37,
+    QMI8658_AY_H        = 0x38,
+    QMI8658_AZ_L        = 0x39,
+    QMI8658_AZ_H        = 0x3A,
+    QMI8658_GX_L        = 0x3B,
+    QMI8658_GX_H        = 0x3C,
+    QMI8658_GY_L        = 0x3D,
+    QMI8658_GY_H        = 0x3E,
+    QMI8658_GZ_L        = 0x3F,
+    QMI8658_GZ_H        = 0x40,
+
+    QMI8658_dQW_L       = 0x49, 
+    QMI8658_dQW_H       = 0x4A, 
+    QMI8658_dQX_L       = 0x4B, 
+    QMI8658_dQX_H       = 0x4C,
+    QMI8658_dQY_L       = 0x4D, 
+    QMI8658_dQY_H       = 0x4E,
+    QMI8658_dQZ_L       = 0x4F, 
+    QMI8658_dQZ_H       = 0x50, 
+    QMI8658_dVX_L       = 0x51, 
+    QMI8658_dVX_H       = 0x52,
+    QMI8658_dVY_L       = 0x53, 
+    QMI8658_dVY_H       = 0x54,
+    QMI8658_dVZ_L       = 0x55, 
+    QMI8658_dVZ_H       = 0x56, 
+    QMI8658_AE_REG1     = 0x57, 
+    QMI8658_AE_REG2     = 0x58
 };
+
+ 
 
 // Accelerometer range options
 enum QMI8658_AccelRange {
@@ -133,12 +152,30 @@ enum QMI8658_GyroODR {
     QMI8658_GYRO_ODR_31_25HZ  = 0x08
 };
 
+// AE output data rate options
+enum QMI8658_AE_ODR {
+    QMI8658_AE_ODR_1HZ   = 0x00,
+    QMI8658_AE_ODR_2HZ   = 0x01,
+    QMI8658_AE_ODR_4HZ   = 0x02,
+    QMI8658_AE_ODR_8HZ   = 0x03,
+    QMI8658_AE_ODR_16HZ  = 0x04,
+    QMI8658_AE_ODR_32HZ  = 0x05,
+    QMI8658_AE_ODR_64HZ  = 0x06
+
+};
+
 // Data structure for sensor readings
 struct QMI8658_Data {
     float accelX, accelY, accelZ;  // Acceleration (units depend on setting: m/s² or mg)
     float gyroX, gyroY, gyroZ;     // Angular velocity (units depend on setting: dps or rad/s)
     float temperature;             // Temperature in °C
     uint32_t timestamp;            // Internal timestamp
+};
+
+// 
+struct QMI8658_AE_Data {
+    float dQW, dQX, dQY, dQZ;
+    float vX, vY, vZ;
 };
 
 // Display precision options
@@ -156,6 +193,11 @@ public:
     // Initialization methods
     bool begin(TwoWire &wire = Wire, uint8_t address = QMI8658_ADDRESS_LOW);
     bool begin(uint8_t sda_pin, uint8_t scl_pin, uint8_t address = QMI8658_ADDRESS_LOW);
+    void setDefaultConf();
+
+
+    // AE Mode
+    bool initAEMode(QMI8658_AccelRange accRange, QMI8658_GyroRange gyroRange, QMI8658_AE_ODR aeODR);
     
     // Configuration methods
     bool setAccelRange(QMI8658_AccelRange range);
@@ -173,6 +215,9 @@ public:
     bool readGyro(float &x, float &y, float &z);
     bool readTemp(float &temperature);
     bool readSensorData(QMI8658_Data &data);
+
+    bool readAEQuternion(float &w, float &x, float &y, float &z);
+    bool readAEVelocity(float &x, float &y, float &z);
     
     // Alternative reading methods with specific units
     bool readAccelMG(float &x, float &y, float &z);     // Always returns mg
@@ -215,6 +260,8 @@ private:
     uint8_t _address;
     uint16_t _accel_lsb_div;
     uint16_t _gyro_lsb_div;
+    const uint16_t _q_lsb_div = 16384;
+    const uint16_t _vel_lsb_div = 1024;
     bool _accel_unit_mps2;  // true = m/s², false = mg
     bool _gyro_unit_rads;   // true = rad/s, false = dps
     int _display_precision; // Number of decimal places for display
@@ -233,6 +280,32 @@ private:
     float convertAccelToMPS2(int16_t raw_value);
     float convertGyroToDPS(int16_t raw_value);
     float convertGyroToRADS(int16_t raw_value);
+    float convertQuternionComponent(int16_t raw_value);
+    float convertVelToMs(int16_t raw_value);
+
+    // From 0x49 addr 8 bytes
+    struct RawAEQuternion 
+    {
+        int16_t W;
+        int16_t X;
+        int16_t Y;
+        int16_t Z;
+    };
+
+    // From 0x51 addr 6 bytes
+    struct RawAEVelocity 
+    {
+        int16_t X;
+        int16_t Y;
+        int16_t Z;
+    };
+
+    // From 0x49 addr 14 bytes
+    struct RawAEData
+    {
+        RawAEQuternion quternion;
+        RawAEVelocity  velocity;
+    };
 };
 
 #endif // QMI8658_H
