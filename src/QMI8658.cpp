@@ -625,31 +625,31 @@ void QMI8658::updateAccelScale(QMI8658_AccelRange range) {
 void QMI8658::updateGyroScale(QMI8658_GyroRange range) {
     switch (range) {
         case QMI8658_GYRO_RANGE_32DPS:
-            _gyro_lsb_div = 1024;
+            _gyro_lsb_div = 2048;
             break;
         case QMI8658_GYRO_RANGE_64DPS:
-            _gyro_lsb_div = 512;
+            _gyro_lsb_div = 1024;
             break;
         case QMI8658_GYRO_RANGE_128DPS:
-            _gyro_lsb_div = 256;
+            _gyro_lsb_div = 512;
             break;
         case QMI8658_GYRO_RANGE_256DPS:
-            _gyro_lsb_div = 128;
+            _gyro_lsb_div = 256;
             break;
         case QMI8658_GYRO_RANGE_512DPS:
-            _gyro_lsb_div = 64;
+            _gyro_lsb_div = 128;
             break;
         case QMI8658_GYRO_RANGE_1024DPS:
-            _gyro_lsb_div = 32;
+            _gyro_lsb_div = 64;
             break;
         case QMI8658_GYRO_RANGE_2048DPS:
-            _gyro_lsb_div = 16;
+            _gyro_lsb_div = 32;
             break;
         case QMI8658_GYRO_RANGE_4096DPS:
-            _gyro_lsb_div = 8;
+            _gyro_lsb_div = 16;
             break;
         default:
-            _gyro_lsb_div = 64; // Default to 512dps
+            _gyro_lsb_div = 128; // Default to 512dps
             break;
     }
 }
