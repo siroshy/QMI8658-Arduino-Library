@@ -82,6 +82,8 @@ enum QMI8658_Register {
     QMI8658_GZ_L        = 0x3F,
     QMI8658_GZ_H        = 0x40,
 
+    QMI8658_COD_STATUS  = 0x46,
+
     QMI8658_dQW_L       = 0x49, 
     QMI8658_dQW_H       = 0x4A, 
     QMI8658_dQX_L       = 0x4B, 
@@ -100,7 +102,25 @@ enum QMI8658_Register {
     QMI8658_AE_REG2     = 0x58
 };
 
- 
+// CTRL9 commands
+enum QMI8658_CMDs {
+    CTRL_CMD_ACK                     = 0x00, // Ctrl9 Acknowledgement. Host acknowledges to QMI8658, to end the protocol.
+    CTRL_CMD_RST_FIFO                = 0x04, // Ctrl9 Reset FIFO from Host
+    CTRL_CMD_REQ_FIFO                = 0x05, // Ctrl9R Get FIFO data from Device
+    CTRL_CMD_WRITE_WOM_SETTING       = 0x08, // WCtrl9 Set up and enable Wake on Motion (WoM)
+    CTRL_CMD_ACCEL_HOST_DELTA_OFFSET = 0x09, // WCtrl9 Change accelerometer offset
+    CTRL_CMD_GYRO_HOST_DELTA_OFFSET  = 0x0A, // WCtrl9 Change gyroscope offset
+    CTRL_CMD_CONFIGURE_TAP           = 0x0C, // WCtrl9 Configure Tap detection
+    CTRL_CMD_CONFIGURE_PEDOMETER     = 0x0D, // WCtrl9 Configure Pedometer
+    CTRL_CMD_CONFIGURE_MOTION        = 0x0E, // WCtrl9 Configure Any Motion / No Motion / Significant Motion detection
+    CTRL_CMD_RESET_PEDOMETER         = 0x0F, // WCtrl9 Reset pedometer count (step count)
+    CTRL_CMD_COPY_USID               = 0x10, // Ctrl9R Copy USID and FW Version to UI registers
+    CTRL_CMD_SET_RPU                 = 0x11, // WCtrl9 Configures IO pull-ups
+    CTRL_CMD_AHB_CLOCK_GATING        = 0x12, // WCtrl9 Internal AHB clock gating switch
+    CTRL_CMD_ON_DEMAND_CALIBRATION   = 0xA2, // WCtrl9 On-Demand Calibration on gyroscope
+    CTRL_CMD_APPLY_GYRO_GAINS        = 0xAA // WCtrl9 Restore the saved Gyroscope gains
+
+};
 
 // Accelerometer range options
 enum QMI8658_AccelRange {
@@ -129,14 +149,14 @@ enum QMI8658_AccelODR {
 
 // Gyroscope range options
 enum QMI8658_GyroRange {
-    QMI8658_GYRO_RANGE_32DPS   = 0x00,
-    QMI8658_GYRO_RANGE_64DPS   = 0x01,
-    QMI8658_GYRO_RANGE_128DPS  = 0x02,
-    QMI8658_GYRO_RANGE_256DPS  = 0x03,
-    QMI8658_GYRO_RANGE_512DPS  = 0x04,
-    QMI8658_GYRO_RANGE_1024DPS = 0x05,
-    QMI8658_GYRO_RANGE_2048DPS = 0x06,
-    QMI8658_GYRO_RANGE_4096DPS = 0x07
+    QMI8658_GYRO_RANGE_16DPS   = 0x00,
+    QMI8658_GYRO_RANGE_32DPS   = 0x01,
+    QMI8658_GYRO_RANGE_64DPS   = 0x02,
+    QMI8658_GYRO_RANGE_128DPS  = 0x03,
+    QMI8658_GYRO_RANGE_256DPS  = 0x04,
+    QMI8658_GYRO_RANGE_512DPS  = 0x05,
+    QMI8658_GYRO_RANGE_1024DPS = 0x06,
+    QMI8658_GYRO_RANGE_2048DPS = 0x07
 };
 
 // Gyroscope output data rate options
@@ -201,6 +221,8 @@ public:
     bool begin(uint8_t sda_pin, uint8_t scl_pin, uint8_t address = QMI8658_ADDRESS_LOW);
     void setDefaultConf();
 
+    // Calibration
+    bool processCOD(Stream *port = nullptr);
 
     // AE Mode
     bool initAEMode(QMI8658_AccelRange accRange, QMI8658_GyroRange gyroRange, QMI8658_AE_ODR aeODR);
